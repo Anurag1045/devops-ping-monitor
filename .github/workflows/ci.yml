@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  lint-test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,16 +19,30 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install flake8 pytest
+          pip install flake8
 
       - name: Lint
         run: flake8 . --max-line-length=100 --extend-exclude=.venv
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
 
       - name: Test
         run: python -m pytest -q
 
   docker-build:
-    needs: lint-test
+    needs: [lint, test]
     runs-on: ubuntu-latest
     permissions:
       contents: read
