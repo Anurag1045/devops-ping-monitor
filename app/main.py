@@ -3,19 +3,25 @@ import requests
 import time
 
 
+def load_servers(path="app/servers.json"):
+    with open(path, "r") as file:
+        return json.load(file)["servers"]
+
+
+def check_server(server):
+    try:
+        response = requests.get(f"https://{server}", timeout=5)
+        return f"{server}: UP ({response.status_code})"
+    except Exception:
+        return f"{server}: DOWN"
+
+
 def main():
     print("DevOps Ping Monitor Started\n")
 
     while True:
-        with open("app/servers.json", "r") as file:
-            data = json.load(file)
-
-        for server in data["servers"]:
-            try:
-                response = requests.get(f"https://{server}", timeout=5)
-                print(f"{server}: UP ({response.status_code})")
-            except Exception:
-                print(f"{server}: DOWN")
+        for server in load_servers():
+            print(check_server(server))
 
         time.sleep(10)
 
