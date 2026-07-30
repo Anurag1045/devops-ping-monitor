@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: ping-monitor
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: ping-monitor
+
+  template:
+    metadata:
+      labels:
+        app: ping-monitor
+
+    spec:
+      containers:
+        - name: ping-monitor
+          image: ping-monitor:v4
+          imagePullPolicy: IfNotPresent
+        
